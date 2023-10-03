@@ -1,0 +1,58 @@
+﻿@model IEnumerable<ShipmentAssistant.Models.HistoryLog>
+
+@{
+    ViewData["Title"] = "History";
+}
+
+<div class="row">
+    <div class="col">
+        <h1>Historia operacji</h1>
+    </div>
+    <div class="col text-end">
+        <form asp-action="Clear" asp-controller="HistoryLogs" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć wszystkie logi?');">
+            <button type="submit" onclick="confirmDelete()" class="btn btn-outline-danger">Wyczyść logi</button>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UnitsRecived)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UnitsRecived)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

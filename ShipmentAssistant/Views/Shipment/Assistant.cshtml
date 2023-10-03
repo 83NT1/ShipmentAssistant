@@ -1,0 +1,125 @@
+﻿@model List<Item>
+
+<div class="row">
+    <div class="col-3">
+        <div class="form-group row">
+            <label class="col col-form-label">
+                Kod:
+            </label>
+            <div class="col">
+                <input id="code" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="col-9">
+        <label class="fw-bold">Postęp</label>
+        <span id="percent"></span>
+    </div>
+</div>
+
+<form asp-action="SaveAssistant" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    lp.
+                </th>
+                <th>
+                    Kod
+                </th>
+                <th>
+                    Nazwa
+                </th>
+                <th>
+                    Szt
+                </th>
+                <th>
+                    Szt przyjęto
+                </th>
+                <th>
+                    Uwagi
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr class="item-row" data-code="@Model[i].Code">
+                    <td>
+                        @Model[i].Index
+                        @Html.HiddenFor(m=>m[i].Index)
+                        @Html.HiddenFor(m=>m[i].Code)
+                        @Html.HiddenFor(m=>m[i].Name)
+                        @Html.HiddenFor(m=>m[i].Units)
+                    </td>
+                    <td>@Model[i].Code</td>
+                    <td>@Model[i].Name</td>
+                    <td class="units">@Model[i].Units</td>
+                    <td>@Html.EditorFor(m => m[i].UnitsRecived, new { htmlAttributes = new { @class = "form-control recived", onchange= "check()" } })</td>
+                    <td>@Html.EditorFor(m => m[i].Info, new { htmlAttributes = new { @class = "form-control"} })</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary" name="submit" type="submit" value="raport">Zapisz i pobierz raport</button>
+    <button class="btn btn-primary" name="submit" type="submit" value="save">Zapisz dane w aplikacji</button>
+    <button class="btn btn-primary" name="submit" type="submit" value="clear" onclick="return confirm('Czy chcesz wyczyścić dane dostawy z pamięci podręcznej?');">Wyczyść historię</button>
+    <a asp-controller="Shipment" asp-action="Index" class="btn btn-danger">Anuluj</a>
+</form>
+
+<script>
+    var input = document.getElementById("code");
+
+    input.addEventListener("input", function (event) {
+        let txt = event.target.value;
+        let rows = document.getElementsByClassName("item-row");
+
+        if (txt.length != 0) {
+
+            for (let i in rows) {
+                let row = rows[i];
+
+                if (row.dataset.code.startsWith(txt)) {
+                    row.style.display = "";
+                }
+                else {
+                    row.style.display = "none";
+                }
+            }
+        } else {
+            for (let i in rows) {
+                let row = rows[i];
+                row.style.display = "";
+            }
+        }
+    })
+
+
+    function check() {
+        let unitsElements = Array.from(document.getElementsByClassName("units"));
+        let recivedElements = Array.from(document.getElementsByClassName("recived"));
+        let unitsTotal = 0;
+        let unitsRecived = 0;
+
+        for (let i in unitsElements) {
+            let units = parseInt(unitsElements[i].innerHTML);
+            let recived = parseInt(recivedElements[i].value);
+            unitsTotal += units;
+            unitsRecived += recived;
+
+            if (recived != 0 && recived == units) {
+                recivedElements[i].parentElement.parentElement.style.background = "green";
+            }
+            else if (recived != 0 && recived > units) {
+                recivedElements[i].parentElement.parentElement.style.background = "yellow";
+            } else {
+                recivedElements[i].parentElement.parentElement.style.background = "";
+            }
+
+            let percent = unitsTotal > 0 && unitsRecived > 0 ? Math.round(unitsRecived*10000/unitsTotal)/100 : 0.0;
+            document.getElementById("percent").innerText = percent + "%";
+        }
+    }
+
+    check();
+</script>

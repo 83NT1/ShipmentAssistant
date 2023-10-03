@@ -1,0 +1,26 @@
+﻿@model string
+
+<form method="post" enctype="multipart/form-data" asp-controller="Shipment" asp-action="Assistant">
+    <div class="form-group">
+        <div class="col-md-10">
+            <h3>Upload File</h3>
+            <input class="form-control" name="file" type="file" accept=".xlsx, xls " />
+        </div>
+    </div>
+    <br />
+    <div class="form-group">
+        <div class="col-md-10">
+            <input class="btn btn-primary" type="submit" value="Upload File" />
+            <a class="btn btn-primary" asp-area="" asp-controller="Shipment" asp-action="LoadAssistant">Zaladuj poprzednie dane</a>
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="checkbox" name="join" checked/> Czy łączyć pozycje
+    </div>
+    @if (Model != null)
+    {
+        <div class="p-2">
+            <div class="alert alert-danger">@Model</div>
+        </div>
+    }
+</form>
